@@ -6,19 +6,53 @@ android {
         applicationId "com.adgad.kboard.plus"
         minSdkVersion 25
         targetSdkVersion 33
-        versionCode 44
-        versionName "5.3.0-plus"
+        versionCode 45
+        versionName "5.3.1-plus"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    // Sign a release only when every variable is set. Otherwise the release APK
+    // stays unsigned and non-debuggable. Passwords are never written into the project.
+    def releaseStoreFile = System.getenv("KBOARD_RELEASE_STORE_FILE")
+    def releaseStorePassword = System.getenv("KBOARD_RELEASE_STORE_PASSWORD")
+    def releaseKeyAlias = System.getenv("KBOARD_RELEASE_KEY_ALIAS")
+    def releaseKeyPassword = System.getenv("KBOARD_RELEASE_KEY_PASSWORD")
+    def releaseSigningValues = [
+            KBOARD_RELEASE_STORE_FILE    : releaseStoreFile,
+            KBOARD_RELEASE_STORE_PASSWORD: releaseStorePassword,
+            KBOARD_RELEASE_KEY_ALIAS     : releaseKeyAlias,
+            KBOARD_RELEASE_KEY_PASSWORD  : releaseKeyPassword,
+    ]
+    def releaseSigningMissing = releaseSigningValues.findAll { name, value ->
+        value == null || value.trim().isEmpty()
+    }
+    if (!releaseSigningMissing.isEmpty() && releaseSigningMissing.size() != releaseSigningValues.size()) {
+        throw new GradleException("Release signing needs all of ${releaseSigningValues.keySet().join(', ')}. Missing: ${releaseSigningMissing.keySet().join(', ')}. Set none of them to build an unsigned release APK.")
+    }
+    def releaseSigningReady = releaseSigningMissing.isEmpty()
+    if (releaseSigningReady) {
+        signingConfigs {
+            release {
+                storeFile file(releaseStoreFile)
+                storePassword releaseStorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             zipAlignEnabled true
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (releaseSigningReady) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 

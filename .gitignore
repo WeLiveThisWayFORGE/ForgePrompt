@@ -6,3 +6,6 @@
 local.properties
 # Upstream credentials file; not part of this fork
 github.properties
+# Release signing material stays off the repo
+*.jks
+*.keystore
