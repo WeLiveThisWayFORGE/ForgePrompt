@@ -50,6 +50,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".MacroHelpActivity"
+            android:label="@string/title_activity_macro_help"
+            android:theme="@style/AppTheme"
+            android:exported="false" />
+        <activity
             android:name=".CustomKeysActivity"
             android:label="@string/settings_name"
             android:theme="@style/AppTheme"

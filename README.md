@@ -28,6 +28,14 @@ Colors are stored on the key in the `userKeys-defaults` preference, so they are 
 
 In **Options**, **Key Size** is Small, Medium, or Large. Medium is the default and matches the original key height and text size. Small and Large change the key height and the label size. Keys stay four across (one across in single-row mode), so the label is ellipsized a little sooner on Large and a little later on Small. **Font Size** still applies on top of that.
 
+## Macro help
+
+**Macro Help** in Settings opens `docs/macro-help.md`, which is bundled in the app and works offline. It describes phrase keys, command keys, and time tokens. The command list later in this file is the upstream reference from adgad/kboard. The bundled guide is the one the app shows, and it does not treat old example websites as part of kboard Plus.
+
+## Time in a phrase
+
+A phrase can contain `{time+5m}`, `{time+10m}`, `{time+20m}`, `{time+30m}`, or any other whole number of minutes up to 100000. Tapping the key replaces that token from the phone's clock. The saved text keeps the token, so the next tap reads the clock again. The tap does not send the message. `{time}` is the current time. Hours (`{time+2h}`, `{time+1h30m}`) and a minus sign work the same way. A broken token, including `{send}` and `{time+100001m}`, is inserted unchanged.
+
 ## Build a debug APK
 
 You need JDK 17 or newer and Android SDK 34.
@@ -45,7 +53,7 @@ Install it with `adb install -r app/build/outputs/apk/debug/app-debug.apk`, then
 
 ## Release build
 
-Version `5.3.1-plus` (versionCode 45) keeps the application id `com.adgad.kboard.plus`. The release build is not debuggable. Gradle signs it with the permanent release key only when every one of these environment variables is set:
+Version `5.3.2-plus` (versionCode 46) keeps the application id `com.adgad.kboard.plus`. The release build is not debuggable. Gradle signs it with the permanent release key only when every one of these environment variables is set:
 
 - `KBOARD_RELEASE_STORE_FILE` — path to the release keystore
 - `KBOARD_RELEASE_STORE_PASSWORD` — keystore password

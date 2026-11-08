@@ -9,7 +9,8 @@
     <string name="label_keyboard_key_search">Search</string>
     <string name="label_keyboard_key_next">Next</string>
     <string name="label_keyboard_key_enter">\u21b5</string>
-    <string name="title_activity_macro_help">MacroHelpActivity</string>
+    <string name="title_activity_macro_help">Macro help</string>
+    <string name="macro_help_missing">The macro help guide is missing from this build.</string>
     <string name="accessibility_service_description">kboard Plus Accessibility - used for getting the current user name in chat apps</string>
     <string name="accessibility_service_label">kboard Plus Accessibility</string>
 </resources>

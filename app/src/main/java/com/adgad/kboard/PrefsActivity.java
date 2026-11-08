@@ -65,8 +65,7 @@ public class PrefsActivity extends PreferenceActivity {
                 toast.show();
                 return true;
             case R.id.macro_help:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/adgad/kboard/wiki"));
-                startActivity(browserIntent);
+                startActivity(new Intent(this, MacroHelpActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
