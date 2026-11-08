@@ -1,0 +1,24 @@
+ForgePrompt
+Copyright and upstream credit
+
+ForgePrompt is free software under the GNU General Public License, version 3
+(GPL-3.0). The license text is the LICENSE file. The license applies to this
+program, including parts that were not written here.
+
+ForgePrompt is a fork of kboard by adgad. File headers in the original
+sources credit arjun. Those copyright notices are unchanged.
+
+Upstream project: https://github.com/adgad/kboard
+Upstream documentation: https://github.com/adgad/kboard/blob/master/README.md
+and https://github.com/adgad/kboard/wiki
+F-Droid page for the upstream app: https://f-droid.org/en/packages/com.adgad.kboard/
+
+The imported baseline is upstream commit 2660fb108f4bd48438e822fdfc2ead1fdf5805ae,
+version 5.3.0, message "bump version number". The command language, most of
+the keyboard, and the original command notes come from that project. Later
+changes in this repository are additions. This repository does not claim the
+original keyboard as new work.
+
+The application id com.adgad.kboard.plus is the Android package name. It is
+kept so an update replaces the previous install of this app and keeps its data.
+It is not a separate product name.
