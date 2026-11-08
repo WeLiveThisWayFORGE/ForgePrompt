@@ -43,6 +43,33 @@ The debug APK, signed with the Android debug key, is written to:
 
 Install it with `adb install -r app/build/outputs/apk/debug/app-debug.apk`, then enable **kboard Plus** under System settings → Languages & input → On-screen keyboard.
 
+## Release build
+
+Version `5.3.1-plus` (versionCode 45) keeps the application id `com.adgad.kboard.plus`. The release build is not debuggable. Gradle signs it with the permanent release key only when every one of these environment variables is set:
+
+- `KBOARD_RELEASE_STORE_FILE` — path to the release keystore
+- `KBOARD_RELEASE_STORE_PASSWORD` — keystore password
+- `KBOARD_RELEASE_KEY_ALIAS` — key alias
+- `KBOARD_RELEASE_KEY_PASSWORD` — key password
+
+Keep those values out of the repository. With none of the variables set:
+
+```bash
+./gradlew assembleRelease
+```
+
+writes an unsigned APK to `app/build/outputs/apk/release/app-release-unsigned.apk`. The release build does not sign with the Android debug key. If only some of the variables are set, the build stops.
+
+## Replacing the debug app
+
+Export your custom keys before uninstalling the debug app. In **Options**, use **Export Keys**, and keep that file. Android updates an installed app only when the new APK uses the same signing key. The permanent release key differs from the debug key, so the release build installs only after the debug app is uninstalled. Uninstalling deletes keys that were not exported.
+
+After the release app is installed, use **Options → Import Keys**. The export file keeps each phrase and its color. An older kboard file (a JSON array of strings) still imports; those keys have no per-key color until you set one.
+
+A later update signed with that same release key installs over the previous release, and the keys already stored in the app stay in place.
+
+Sideloading can still show Android’s install warning, including “install unknown apps” and Play Protect, including for this release build.
+
 ---
 
 The rest of this file is the upstream command reference. Command keys work the same way as in kboard.
