@@ -1,9 +1,9 @@
 package com.adgad.kboard;
 
-import android.app.Application;
-
 /**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
+ * Upstream kboard shipped this as an empty instrumentation placeholder extending
+ * android.test.ApplicationTestCase. That class is not in current Android SDKs and the
+ * original file had no test methods, so it is kept as an empty class that still compiles.
  */
-class ApplicationTest extends ApplicationTestCase<Application> {
+public class ApplicationTest {
 }

@@ -1,16 +1,51 @@
-# kboard
+# kboard Plus
 
-A programmable keyboard for Android that lets you send phrases, lenny faces, macros, or data from the Internet in a single tap!
+kboard Plus is a fork of [kboard](https://github.com/adgad/kboard) by adgad (file headers credit arjun). The baseline is the F-Droid source at upstream commit `2660fb1` (`5.3.0`, "bump version number"). This repository keeps that master history. Upstream `github.properties` is not part of this history. The app is licensed under GPL-3.0; see `LICENSE`. Original copyright notices are unchanged.
 
-[F-Droid](https://f-droid.org/en/packages/com.adgad.kboard/) (up to date)
+It is a programmable Android keyboard for phrases, lenny faces, macros, and one-tap replies. This fork can be installed next to the official kboard app, and it adds a color for each key plus a key-size setting.
 
-[Play Store](https://play.google.com/store/apps/details?id=com.adgad.kboard) (outdated)
+Upstream links: [F-Droid](https://f-droid.org/en/packages/com.adgad.kboard/) · [source](https://github.com/adgad/kboard)
 
-[Demo](https://www.youtube.com/watch?v=h3i5U2tk364)
+## Install beside official kboard
 
-<img src="https://user-images.githubusercontent.com/1978880/51786974-b85b9780-2163-11e9-85f2-d3e64a29e0d4.jpg" alt="screenshot of kboard in action" width="400">
+The application id is `com.adgad.kboard.plus`. The launcher name, the keyboard name in Android’s input-method list, and the accessibility service name are **kboard Plus**. The custom-keys screen uses its own intent action (`com.adgad.kboard.plus.CustomKeysActivity`), so opening it does not land in the official app. The Java package stays `com.adgad.kboard`.
+
+There is no content provider or account type in this app. Backup uses the app’s own preference file (`com.adgad.kboard.plus_preferences`).
+
+## Key color
+
+1. Open kboard Plus.
+2. Tap **Custom Keys**.
+3. Tap a key, or the + button to add one.
+4. Type the phrase or command, then tap a color. The × swatch clears the color.
+5. Tap **OK** or **Add**.
+
+The keyboard paints that color as the key background and picks black or white text so the label stays readable. Keys with no color keep the background color from **Options**. The same color is shown on the custom-key row.
+
+Colors are stored on the key in the `userKeys-defaults` preference, so they are included in **Export Keys**, **Import Keys**, and Android backup. A file saved by older kboard (a JSON array of strings) still imports; those keys simply have no color. kboard Plus writes keys back as JSON objects (`{"text":"...","color":-16711681}`), and a missing `color` means “use the keyboard background”.
+
+## Key size
+
+In **Options**, **Key Size** is Small, Medium, or Large. Medium is the default and matches the original key height and text size. Small and Large change the key height and the label size. Keys stay four across (one across in single-row mode), so the label is ellipsized a little sooner on Large and a little later on Small. **Font Size** still applies on top of that.
+
+## Build a debug APK
+
+You need JDK 17 or newer and Android SDK 34.
+
+```bash
+echo "sdk.dir=$ANDROID_HOME" > local.properties
+./gradlew assembleDebug test
+```
+
+The debug APK, signed with the Android debug key, is written to:
+
+`app/build/outputs/apk/debug/app-debug.apk`
+
+Install it with `adb install -r app/build/outputs/apk/debug/app-debug.apk`, then enable **kboard Plus** under System settings → Languages & input → On-screen keyboard.
 
 ---
+
+The rest of this file is the upstream command reference. Command keys work the same way as in kboard.
 
 
 ## Commands

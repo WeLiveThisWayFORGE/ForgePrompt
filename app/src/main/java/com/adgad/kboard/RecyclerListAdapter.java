@@ -16,14 +16,15 @@ package com.adgad.kboard;
  * limitations under the License.
  */
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.TypedValue;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,12 +32,14 @@ import java.util.List;
 
 class RecyclerListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
-    private final List<String> mItems = new ArrayList<>();
+    private final List<UserKey> mItems = new ArrayList<UserKey>();
     private final ItemViewHolder.ItemClickListener mListener;
     private final SharedPreferences mPreferences;
-    private final Gson gson = new Gson();
+    private int selectableItemBackground;
+    private int defaultTextColor = 0xDE000000;
+    private boolean themeResolved;
 
-    public RecyclerListAdapter(ArrayList items, SharedPreferences sharedPrefs, ItemViewHolder.ItemClickListener listener) {
+    public RecyclerListAdapter(ArrayList<UserKey> items, SharedPreferences sharedPrefs, ItemViewHolder.ItemClickListener listener) {
         mItems.addAll(items);
         mListener = listener;
         mPreferences = sharedPrefs;
@@ -51,29 +54,58 @@ class RecyclerListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
-        holder.textView.setText(mItems.get(position));
+        resolveTheme(holder.textView.getContext());
+        UserKey item = mItems.get(position);
+        holder.textView.setText(item.text);
+        if (item.color != null) {
+            holder.textView.setBackgroundColor(item.color);
+            holder.textView.setTextColor(ColorContrast.textColorFor(item.color));
+        } else {
+            if (selectableItemBackground != 0) {
+                holder.textView.setBackgroundResource(selectableItemBackground);
+            }
+            holder.textView.setTextColor(defaultTextColor);
+        }
     }
 
+
+    private void resolveTheme(Context context) {
+        if (themeResolved) {
+            return;
+        }
+        TypedValue value = new TypedValue();
+        if (context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, value, true)) {
+            selectableItemBackground = value.resourceId;
+        }
+        if (context.getTheme().resolveAttribute(android.R.attr.textColorPrimary, value, true)) {
+            if (value.resourceId != 0) {
+                defaultTextColor = ContextCompat.getColor(context, value.resourceId);
+            } else if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+                defaultTextColor = value.data;
+            }
+        }
+        themeResolved = true;
+    }
 
     private void updateWords() {
         SharedPreferences.Editor editor = mPreferences.edit();
-        editor.putString(KboardIME.Keys.STORAGE_KEY, gson.toJson(mItems));
+        editor.putString(KboardIME.Keys.STORAGE_KEY, KeyStore.toJson(mItems));
         editor.apply();
     }
 
-    public void add(String item) {
+    public void add(UserKey item) {
         mItems.add(item);
         notifyItemInserted(mItems.size());
         updateWords();
     }
 
-    public void set(int position, String item) {
+    public void set(int position, UserKey item) {
         mItems.set(position, item);
         notifyItemChanged(position);
         updateWords();
     }
 
-    public void addAll(Collection<String> items) {
+    public void addAll(Collection<UserKey> items) {
         int start = mItems.size();
         mItems.addAll(items);
         notifyItemRangeInserted(start, mItems.size());
@@ -86,7 +118,7 @@ class RecyclerListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
         updateWords();
     }
 
-    public String get(int position) {
+    public UserKey get(int position) {
         return mItems.get(position);
     }
 
@@ -98,7 +130,7 @@ class RecyclerListAdapter extends RecyclerView.Adapter<ItemViewHolder> {
     }
 
     public void swap(int fromPosition, int toPosition) {
-        String text = mItems.get(fromPosition);
+        UserKey text = mItems.get(fromPosition);
         mItems.remove(fromPosition);
         mItems.add(toPosition, text);
         notifyItemMoved(fromPosition, toPosition);

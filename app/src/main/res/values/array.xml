@@ -711,4 +711,16 @@
         <item>"48"</item>
     </string-array>
 
+    <string-array name="keysizes">
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+    </string-array>
+
+    <string-array name="keysize_values">
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
+    </string-array>
+
 </resources>

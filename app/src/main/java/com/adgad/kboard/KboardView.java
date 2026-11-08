@@ -39,13 +39,13 @@ public class KboardView extends KeyboardView {
     }
 
 
-    private String ellipsize(String input) {
+    private String ellipsize(String input, int maxChars) {
         String ellip = "...";
-        if (input == null || input.length() <= 14
+        if (input == null || input.length() <= maxChars
                 || input.length() < ellip.length()) {
             return input;
         }
-        return input.substring(0, 14 - ellip.length()).concat(ellip);
+        return input.substring(0, maxChars - ellip.length()).concat(ellip);
     }
 
     private boolean isLuckyKey(Keyboard.Key key) {
@@ -64,7 +64,12 @@ public class KboardView extends KeyboardView {
         int borderColor = sharedPref.getInt("bgcolor", R.color.md_teal200);
         int pressedColor = sharedPref.getInt("pressedcolor", R.color.md_teal500);
         int textColor = sharedPref.getInt("textcolor", R.color.material_black);
-        int textSize = Integer.parseInt(Objects.requireNonNull(sharedPref.getString("fontsize", "36")));
+        String keySize = sharedPref.getString(KeySize.PREF, KeySize.MEDIUM);
+        float textScale = KeySize.textScale(keySize);
+        float heightScale = KeySize.heightScale(keySize);
+        int maxLabelChars = KeySize.maxLabelChars(keySize);
+        int baseTextSize = Integer.parseInt(Objects.requireNonNull(sharedPref.getString("fontsize", "36")));
+        int textSize = Math.max(1, Math.round(baseTextSize * textScale));
         boolean spacing = sharedPref.getBoolean("spacing", false);
         int radius = 5;
         boolean isBold = sharedPref.getBoolean("textBold", true);
@@ -80,21 +85,32 @@ public class KboardView extends KeyboardView {
 
         List<Keyboard.Key> keys = getKeyboard().getKeys();
         for (Keyboard.Key key : keys) {
-
-            mBackground.setColor(borderColor);
-
-
-
-            if((key.pressed && !isLuckyKey(key)) || (isLuckyKey(key) && !key.pressed)) {
-                mKey.setColor(pressedColor);
-            } else {
-                mKey.setColor(bgColor);
+            Integer customColor = null;
+            if (key instanceof KBoard.LatinKey) {
+                customColor = ((KBoard.LatinKey) key).backgroundColor;
             }
+            boolean pressed = (key.pressed && !isLuckyKey(key)) || (isLuckyKey(key) && !key.pressed);
+            int fill;
+            if (customColor != null) {
+                fill = pressed ? ColorContrast.darken(customColor, 0.78f) : customColor;
+                mBackground.setColor(ColorContrast.darken(customColor, 0.85f));
+            } else if (pressed) {
+                fill = pressedColor;
+                mBackground.setColor(borderColor);
+            } else {
+                fill = bgColor;
+                mBackground.setColor(borderColor);
+            }
+            mKey.setColor(fill);
+            int labelColor = customColor != null ? ColorContrast.textColorFor(fill) : textColor;
 
-            int marginBottom = spacing ? (key.y + key.height == height) ? 20 : 6 : 0;
-            int marginTop = spacing ? (key.y == 0) ? 20 :6 : 0;
-            int marginLeft = spacing ? (key.x == 0) ? 20 : 5 : 0;
-            int marginRight = spacing ?(key.x + key.width == width) ? 20 : 5 : 0;
+            int edgeGap = Math.round(20 * heightScale);
+            int innerGap = Math.round(6 * heightScale);
+            int sideGap = Math.round(5 * heightScale);
+            int marginBottom = spacing ? (key.y + key.height == height) ? edgeGap : innerGap : 0;
+            int marginTop = spacing ? (key.y == 0) ? edgeGap : innerGap : 0;
+            int marginLeft = spacing ? (key.x == 0) ? edgeGap : sideGap : 0;
+            int marginRight = spacing ?(key.x + key.width == width) ? edgeGap : sideGap : 0;
 
             canvas.drawRect(key.x, key.y, key.x + key.width, key.y + key.height, mBackground);
 
@@ -104,15 +120,19 @@ public class KboardView extends KeyboardView {
                 canvas.drawRect(key.x + marginLeft, key.y + marginTop, key.x + key.width - marginRight, key.y + key.height - marginBottom, mKey);
 
             }
+            mPaint.setColor(labelColor);
             if (key.icon != null) {
-                key.icon.setBounds(key.x + (key.width/2) - 30, key.y + (key.height/2) - 40, key.x + (key.width/2) + 30, key.y + (key.height/2) + 20);
-                key.icon.setColorFilter(textColor, PorterDuff.Mode.MULTIPLY);
+                int iconHalf = Math.round(30 * textScale);
+                int iconAbove = Math.round(40 * textScale);
+                int iconBelow = Math.round(20 * textScale);
+                key.icon.setBounds(key.x + (key.width/2) - iconHalf, key.y + (key.height/2) - iconAbove, key.x + (key.width/2) + iconHalf, key.y + (key.height/2) + iconBelow);
+                key.icon.setColorFilter(labelColor, PorterDuff.Mode.MULTIPLY);
                 key.icon.draw(canvas);
             } else if(key.label != null) {
                 String label = key.popupCharacters != null ? key.popupCharacters.toString() : key.label.toString();
                 boolean isCommandKey = label.length() > 2 && label.charAt(0) == '/' && label.indexOf("!") > 0;
                 if(key.codes[0] == 10) {
-                    mPaint.setTextSize(textSize + 32); //enter icon is small so make it bigger
+                    mPaint.setTextSize(Math.round((baseTextSize + 32) * textScale)); //enter icon is small so make it bigger
                 } else {
                     mPaint.setTextSize(textSize);
                 }
@@ -124,7 +144,7 @@ public class KboardView extends KeyboardView {
                     mPaint.setTypeface(Typeface.create(Typeface.DEFAULT, isBold ? Typeface.BOLD : Typeface.NORMAL));
                     mPaint.setUnderlineText(false);
                 }
-                canvas.drawText(ellipsize(label), key.x + ((key.width - marginRight) / 2) + marginLeft, key.y + ((key.height - marginBottom) / 2) + marginTop, mPaint);
+                canvas.drawText(ellipsize(label, maxLabelChars), key.x + ((key.width - marginRight) / 2) + marginLeft, key.y + ((key.height - marginBottom) / 2) + marginTop, mPaint);
             }
         }
     }

@@ -18,8 +18,6 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +39,8 @@ public class KboardIME  extends InputMethodService
     private Vibrator vib;
     private List<Keyboard.Key> mKeys;
 
-    private List<String> keys;
+    private List<UserKey> keys;
+    private String mKeySize = KeySize.MEDIUM;
     private boolean mPassiveAggressive;
     private boolean mAutoSpace;
     private boolean mAutoSend;
@@ -76,6 +75,7 @@ public class KboardIME  extends InputMethodService
         mVibrateOnClick = sharedPref.getBoolean("vibrate_on", false);
         mSoundOnClick = sharedPref.getBoolean("sound_on", false);
         mPassiveAggressive = sharedPref.getBoolean("passive_aggressive", false);
+        mKeySize = sharedPref.getString(KeySize.PREF, KeySize.MEDIUM);
         mRows = Integer.parseInt(Objects.requireNonNull(sharedPref.getString("rows", "5")));
         mKeysPerRow = (mRows == 1) ? 1 : 4;
         mKeysPerScreen = mRows * mKeysPerRow;
@@ -84,11 +84,17 @@ public class KboardIME  extends InputMethodService
 
 
     private void setKeys() {
-        Gson gson = new Gson();
-
-        String defaultJson = gson.toJson(Keys.getDefault());
-        String keysAsString = sharedPref.getString(Keys.STORAGE_KEY, defaultJson);
-        keys = gson.fromJson(keysAsString, ArrayList.class);
+        String stored = sharedPref.getString(Keys.STORAGE_KEY, null);
+        if (stored == null) {
+            keys = Keys.getDefault();
+        } else {
+            try {
+                keys = KeyStore.fromJson(stored);
+            } catch (RuntimeException e) {
+                Log.e(TAG, "Could not read saved keys, using defaults", e);
+                keys = Keys.getDefault();
+            }
+        }
         totalScreens = (int)Math.ceil((double)keys.size() / (mRows * mKeysPerRow));
 
     }
@@ -112,6 +118,7 @@ public class KboardIME  extends InputMethodService
         } else {
             keyboard = new KBoard(this, R.xml.normal);
         }
+        keyboard.applyHeightScale(KeySize.heightScale(mKeySize));
         mKeys = keyboard.getKeys();
         resetKeyChars();
     }
@@ -132,19 +139,36 @@ public class KboardIME  extends InputMethodService
         keyboard.setImeOptions(this, attribute.imeOptions);
     }
 
+    private UserKey userKeyForCode(int code) {
+        if (code < -100 && code >= (-100 - mKeysPerScreen)) {
+            int indOfKey = -(code + 101 - (mScreen * mKeysPerScreen));
+            if (indOfKey >= 0 && indOfKey < keys.size()) {
+                return keys.get(indOfKey);
+            }
+        }
+        return null;
+    }
+
     private String getKeyString(int code) {
         if (code == -6) {
             return (mScreen + 1) + "/" + totalScreens;
         } else if (code < -100 && code >= (-100 - mKeysPerScreen)) {
-            int indOfKey = -(code + 101 - (mScreen * mKeysPerScreen));
-            if (indOfKey < keys.size()) {
-                return keys.get(indOfKey);
-            } else {
+            UserKey userKey = userKeyForCode(code);
+            if (userKey == null || userKey.text == null) {
                 return "NO_VALUE";
             }
+            return userKey.text;
         } else {
             return "";
         }
+    }
+
+    private List<String> keyTexts() {
+        ArrayList<String> texts = new ArrayList<String>();
+        for (UserKey key : keys) {
+            texts.add(key.text == null ? "" : key.text);
+        }
+        return texts;
     }
 
 
@@ -152,6 +176,10 @@ public class KboardIME  extends InputMethodService
         String newString;
         for(Keyboard.Key key:mKeys) {
             newString = getKeyString(key.codes[0]);
+            if (key instanceof KBoard.LatinKey) {
+                UserKey userKey = userKeyForCode(key.codes[0]);
+                ((KBoard.LatinKey) key).backgroundColor = userKey == null ? null : userKey.color;
+            }
             if(newString == "NO_VALUE") {
                 key.label = "";
                 key.popupCharacters = "";
@@ -182,7 +210,7 @@ public class KboardIME  extends InputMethodService
                 this,
                 ic,
                 getCurrentInputEditorInfo(),
-                keys,
+                keyTexts(),
                 mAutoSpace,
                 mPassiveAggressive);
 
@@ -304,58 +332,58 @@ public class KboardIME  extends InputMethodService
     }
 
     public static class Keys {
-        public static ArrayList<String> getDefault() {
-            ArrayList<String> defaultKeys = new ArrayList<>();
-            defaultKeys.add("k");
-            defaultKeys.add("lol!");
-            defaultKeys.add("Good thanks, yourself?");
-            defaultKeys.add("thanks");
-            defaultKeys.add("👍");
-            defaultKeys.add("ಠ_ಠ");
-            defaultKeys.add("haha");
-            defaultKeys.add("¯\\_(ツ)_/¯");
-            defaultKeys.add("/exec!dt(!),e($0)");
-            defaultKeys.add("\uD83D\uDE12");
+        public static ArrayList<UserKey> getDefault() {
+            ArrayList<UserKey> defaultKeys = new ArrayList<UserKey>();
+            defaultKeys.add(new UserKey("k"));
+            defaultKeys.add(new UserKey("lol!"));
+            defaultKeys.add(new UserKey("Good thanks, yourself?"));
+            defaultKeys.add(new UserKey("thanks"));
+            defaultKeys.add(new UserKey("👍"));
+            defaultKeys.add(new UserKey("ಠ_ಠ"));
+            defaultKeys.add(new UserKey("haha"));
+            defaultKeys.add(new UserKey("¯\\_(ツ)_/¯"));
+            defaultKeys.add(new UserKey("/exec!dt(!),e($0)"));
+            defaultKeys.add(new UserKey("\uD83D\uDE12"));
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                defaultKeys.add("/🅰🅱🅲!ds,fancy(darksquare)");
-                defaultKeys.add("/🄰🄱🄲!ds,fancy(square)");
-                defaultKeys.add("/🅐🅑🅒!ds,fancy(darkcircle)");
-                defaultKeys.add("/ⓐⓑⓒ!ds,fancy(circle)");
-                defaultKeys.add("/𝚊𝚋𝚌!ds,fancy(monospace)");
-                defaultKeys.add("/𝕒𝕓𝕔!ds,fancy(double)");
-                defaultKeys.add("/𝔞𝔟𝔠!ds,fancy(fancy)");
-                defaultKeys.add("/𝖆𝖇𝖈!ds,fancy(fancybold)");
+                defaultKeys.add(new UserKey("/🅰🅱🅲!ds,fancy(darksquare)"));
+                defaultKeys.add(new UserKey("/🄰🄱🄲!ds,fancy(square)"));
+                defaultKeys.add(new UserKey("/🅐🅑🅒!ds,fancy(darkcircle)"));
+                defaultKeys.add(new UserKey("/ⓐⓑⓒ!ds,fancy(circle)"));
+                defaultKeys.add(new UserKey("/𝚊𝚋𝚌!ds,fancy(monospace)"));
+                defaultKeys.add(new UserKey("/𝕒𝕓𝕔!ds,fancy(double)"));
+                defaultKeys.add(new UserKey("/𝔞𝔟𝔠!ds,fancy(fancy)"));
+                defaultKeys.add(new UserKey("/𝖆𝖇𝖈!ds,fancy(fancybold)"));
             }
 
-            defaultKeys.add("/catfact!curl(https://kboard-api.glitch.me/catfact");
-            defaultKeys.add("ಥ_ಥ");
-            defaultKeys.add("thank you");
-            defaultKeys.add("sorry");
-            defaultKeys.add("( ͡° \u035Cʖ ͡°)");
-            defaultKeys.add("(╯°□°）╯︵ ┻━┻");
-            defaultKeys.add("hey!");
-            defaultKeys.add("cool");
+            defaultKeys.add(new UserKey("/catfact!curl(https://kboard-api.glitch.me/catfact"));
+            defaultKeys.add(new UserKey("ಥ_ಥ"));
+            defaultKeys.add(new UserKey("thank you"));
+            defaultKeys.add(new UserKey("sorry"));
+            defaultKeys.add(new UserKey("( ͡° \u035Cʖ ͡°)"));
+            defaultKeys.add(new UserKey("(╯°□°）╯︵ ┻━┻"));
+            defaultKeys.add(new UserKey("hey!"));
+            defaultKeys.add(new UserKey("cool"));
 
-            defaultKeys.add("yes");
-            defaultKeys.add("no");
-            defaultKeys.add("maybe");
-            defaultKeys.add("don't mind");
-            defaultKeys.add("sure, whatever");
-            defaultKeys.add("xxx");
-            defaultKeys.add("Can't talk now. Speak later.");
-            defaultKeys.add("I'll be late");
-            defaultKeys.add("okay");
+            defaultKeys.add(new UserKey("yes"));
+            defaultKeys.add(new UserKey("no"));
+            defaultKeys.add(new UserKey("maybe"));
+            defaultKeys.add(new UserKey("don't mind"));
+            defaultKeys.add(new UserKey("sure, whatever"));
+            defaultKeys.add(new UserKey("xxx"));
+            defaultKeys.add(new UserKey("Can't talk now. Speak later."));
+            defaultKeys.add(new UserKey("I'll be late"));
+            defaultKeys.add(new UserKey("okay"));
 
-            defaultKeys.add("/Italicise Previous!dw,i(_$0_)");
-            defaultKeys.add("/Italicise Next!i(__),j");
-            defaultKeys.add("/Bolden Previous!dw,i(*$0*)");
-            defaultKeys.add("/Bolden Next!i(**),j");
-            defaultKeys.add("/Copy All!yy");
-            defaultKeys.add("/Paste!p");
-            defaultKeys.add("/-1w!b");
-            defaultKeys.add("/+1w!w");
-            defaultKeys.add("/Delete Word!dw");
+            defaultKeys.add(new UserKey("/Italicise Previous!dw,i(_$0_)"));
+            defaultKeys.add(new UserKey("/Italicise Next!i(__),j"));
+            defaultKeys.add(new UserKey("/Bolden Previous!dw,i(*$0*)"));
+            defaultKeys.add(new UserKey("/Bolden Next!i(**),j"));
+            defaultKeys.add(new UserKey("/Copy All!yy"));
+            defaultKeys.add(new UserKey("/Paste!p"));
+            defaultKeys.add(new UserKey("/-1w!b"));
+            defaultKeys.add(new UserKey("/+1w!w"));
+            defaultKeys.add(new UserKey("/Delete Word!dw"));
             return defaultKeys;
         }
 

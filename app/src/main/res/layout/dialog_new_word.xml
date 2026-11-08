@@ -1,19 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/word"
-        android:inputType="textNoSuggestions"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
-        android:hint="Text"
-        android:importantForAutofill="no"
-        />
-</LinearLayout>
+        android:minWidth="300dp"
+        android:paddingBottom="8dp">
+
+        <EditText
+            android:id="@+id/word"
+            android:inputType="textNoSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="4dp"
+            android:hint="Text"
+            android:importantForAutofill="no"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Key color"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="4dp"
+            android:text="Optional. No color uses the keyboard background."
+            android:textSize="12sp" />
+
+        <GridLayout
+            android:id="@+id/color_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alignmentMode="alignBounds"
+            android:columnCount="6"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp" />
+
+        <TextView
+            android:id="@+id/color_preview"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="Uses keyboard background" />
+    </LinearLayout>
+</ScrollView>

@@ -26,7 +26,7 @@
 
         <service android:name=".KboardAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:label="Kboard Accessibility"
+            android:label="@string/accessibility_service_label"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -55,7 +55,7 @@
             android:theme="@style/AppTheme"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.adgad.kboard.CustomKeysActivity" />
+                <action android:name="com.adgad.kboard.plus.CustomKeysActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

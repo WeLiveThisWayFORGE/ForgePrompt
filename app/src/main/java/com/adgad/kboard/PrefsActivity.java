@@ -15,8 +15,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -86,7 +84,6 @@ public class PrefsActivity extends PreferenceActivity {
     public static class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        private final Gson gson = new Gson();
         SharedPreferences prefs = null;
         private final int EXPORT_REQUEST_CODE = 1;
         private final int IMPORT_REQUEST_CODE = 2;
@@ -122,7 +119,7 @@ public class PrefsActivity extends PreferenceActivity {
                     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     intent.setType("application/json");
-                    intent.putExtra(Intent.EXTRA_TITLE, "kboard-keys.json");
+                    intent.putExtra(Intent.EXTRA_TITLE, "kboard-plus-keys.json");
                     startActivityForResult(intent, EXPORT_REQUEST_CODE);
                     return true;
                 }
@@ -163,6 +160,9 @@ public class PrefsActivity extends PreferenceActivity {
             super.onActivityResult(requestCode, resultCode, data);
             OutputStream outputStream = null;
             InputStream inputStream = null;
+            if (data == null || data.getData() == null) {
+                return;
+            }
             if (requestCode == EXPORT_REQUEST_CODE) {
 
                 String currentVals = prefs.getString(KboardIME.Keys.STORAGE_KEY, "");
@@ -182,7 +182,7 @@ public class PrefsActivity extends PreferenceActivity {
                     e.printStackTrace();
                 } finally {
                     try {
-                        outputStream.close();
+                        if (outputStream != null) outputStream.close();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -191,9 +191,9 @@ public class PrefsActivity extends PreferenceActivity {
                 try {
                     inputStream =  this.getActivity().getContentResolver().openInputStream(data.getData());
                     String keys = isToString(inputStream);
-                    ArrayList<String> keysAsJson = gson.fromJson(keys, ArrayList.class);
+                    ArrayList<UserKey> keysAsJson = KeyStore.fromJson(keys);
                     SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString(KboardIME.Keys.STORAGE_KEY, keys);
+                    editor.putString(KboardIME.Keys.STORAGE_KEY, KeyStore.toJson(keysAsJson));
                     editor.apply();
                     Toast toast = Toast.makeText(this.getActivity(), "Imported " + keysAsJson.size() + " keys!", Toast.LENGTH_SHORT);
                     toast.show();
@@ -201,6 +201,9 @@ public class PrefsActivity extends PreferenceActivity {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this.getActivity(), "Could not import that file. Choose a kboard keys JSON file.", Toast.LENGTH_LONG).show();
                 } finally {
                     try {
                         if (inputStream != null) inputStream.close();

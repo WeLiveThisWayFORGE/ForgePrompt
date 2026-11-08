@@ -17,14 +17,11 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 
 public class CustomKeysActivity extends Activity implements AddWordDialogFragment.AddWordDialogListener {
 
 
-    private final Gson gson = new Gson();
     private RecyclerListAdapter adapter;
 
     /**
@@ -42,9 +39,17 @@ public class CustomKeysActivity extends Activity implements AddWordDialogFragmen
 
         setContentView(R.layout.list_view);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String defaultJson = gson.toJson(KboardIME.Keys.getDefault());
-        String keysAsString = sharedPref.getString(KboardIME.Keys.STORAGE_KEY, defaultJson);
-        ArrayList<String> keys = gson.fromJson(keysAsString, ArrayList.class);
+        String keysAsString = sharedPref.getString(KboardIME.Keys.STORAGE_KEY, null);
+        ArrayList<UserKey> keys;
+        if (keysAsString == null) {
+            keys = KboardIME.Keys.getDefault();
+        } else {
+            try {
+                keys = KeyStore.fromJson(keysAsString);
+            } catch (RuntimeException e) {
+                keys = KboardIME.Keys.getDefault();
+            }
+        }
 
         RecyclerView recyclerView =  findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -86,11 +91,17 @@ public class CustomKeysActivity extends Activity implements AddWordDialogFragmen
     }
 
 
-    private void showAddDialog(int index, String word) {
+    private void showAddDialog(int index, UserKey key) {
         DialogFragment newFragment = new AddWordDialogFragment();
         Bundle args = new Bundle();
         args.putInt("index", index);
-        args.putString("word", word);
+        if (key != null) {
+            args.putString("word", key.text);
+            if (key.color != null) {
+                args.putBoolean("hasColor", true);
+                args.putInt("color", key.color);
+            }
+        }
         newFragment.setArguments(args);
         newFragment.show(getFragmentManager(), "new_word");
     }
@@ -100,11 +111,13 @@ public class CustomKeysActivity extends Activity implements AddWordDialogFragmen
     public void onDialogPositiveClick(DialogFragment dialog, int index) {
         TextView t = dialog.getDialog().findViewById(R.id.word);
         String text = t.getText().toString();
+        Integer color = ((AddWordDialogFragment) dialog).getSelectedColor();
         if(text.length() > 0) {
+            UserKey key = new UserKey(text, color);
             if (index >= 0) {
-                adapter.set(index, t.getText().toString());
+                adapter.set(index, key);
             } else {
-                adapter.add(t.getText().toString());
+                adapter.add(key);
 
             }
         }
