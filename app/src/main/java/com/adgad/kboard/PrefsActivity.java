@@ -65,8 +65,7 @@ public class PrefsActivity extends PreferenceActivity {
                 toast.show();
                 return true;
             case R.id.macro_help:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/adgad/kboard/wiki"));
-                startActivity(browserIntent);
+                startActivity(new Intent(this, MacroHelpActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -119,7 +118,7 @@ public class PrefsActivity extends PreferenceActivity {
                     Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                     intent.addCategory(Intent.CATEGORY_OPENABLE);
                     intent.setType("application/json");
-                    intent.putExtra(Intent.EXTRA_TITLE, "kboard-plus-keys.json");
+                    intent.putExtra(Intent.EXTRA_TITLE, "forgeprompt-keys.json");
                     startActivityForResult(intent, EXPORT_REQUEST_CODE);
                     return true;
                 }
@@ -203,7 +202,7 @@ public class PrefsActivity extends PreferenceActivity {
                     e.printStackTrace();
                 } catch (RuntimeException e) {
                     e.printStackTrace();
-                    Toast.makeText(this.getActivity(), "Could not import that file. Choose a kboard keys JSON file.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this.getActivity(), "Could not import that file. Choose a keys JSON file.", Toast.LENGTH_LONG).show();
                 } finally {
                     try {
                         if (inputStream != null) inputStream.close();

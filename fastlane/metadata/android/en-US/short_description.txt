@@ -1,1 +1,1 @@
-Phrase keyboard with per-key colors and a choice of key sizes.
+Phrases, macros, per-key colors, and key sizes.

@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
+import android.text.format.DateFormat;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputContentInfo;
 
@@ -34,8 +35,10 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -246,7 +249,7 @@ public class KCommands {
     //insert text raw (without autospace etc)
     public void iraw(int n, String parameter) {
         for(int i=0;i<n;i++) {
-                inputConnection.commitText(parameter, 1);
+                inputConnection.commitText(expandTime(parameter), 1);
         }
     }
 
@@ -300,7 +303,7 @@ public class KCommands {
     //make uppercase
     public void upper(int n, String parameter) {
         for(int i=0;i<n;i++) {
-                inputConnection.commitText(parameter.toUpperCase(), 1);
+                inputConnection.commitText(expandTime(parameter).toUpperCase(), 1);
         }
     }
 
@@ -308,7 +311,7 @@ public class KCommands {
     public void lower(int n, String parameter) {
         for(int i=0;i<n;i++) {
 
-                inputConnection.commitText(parameter.toLowerCase(), 1);
+                inputConnection.commitText(expandTime(parameter).toLowerCase(), 1);
 
         }
     }
@@ -603,7 +606,19 @@ public class KCommands {
             }
             newWord = newWord.replace("$wachat", messageStr);
         }
-        return newWord;
+        return expandTime(newWord);
+    }
+
+    private String expandTime(String text) {
+        if (text == null || text.indexOf("{time") < 0) {
+            return text;
+        }
+        return TimePlaceholders.expand(
+                text,
+                System::currentTimeMillis,
+                TimeZone.getDefault(),
+                Locale.getDefault(),
+                DateFormat.is24HourFormat(mIme));
     }
 
     private void execute(String cmd, int n, String parameter) {

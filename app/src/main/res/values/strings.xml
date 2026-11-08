@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">kboard Plus</string>
-    <string name="kboard_ime">kboard Plus</string>
-    <string name="settings_name">kboard Plus Settings</string>
+    <string name="app_name">ForgePrompt</string>
+    <string name="kboard_ime">ForgePrompt</string>
+    <string name="settings_name">ForgePrompt</string>
     <string name="label_keyboard_key_go">Go</string>
     <string name="label_keyboard_key_send">Send</string>
     <string name="label_keyboard_key_search">Search</string>
     <string name="label_keyboard_key_next">Next</string>
     <string name="label_keyboard_key_enter">\u21b5</string>
-    <string name="title_activity_macro_help">MacroHelpActivity</string>
-    <string name="accessibility_service_description">kboard Plus Accessibility - used for getting the current user name in chat apps</string>
-    <string name="accessibility_service_label">kboard Plus Accessibility</string>
+    <string name="title_activity_macro_help">Macro help</string>
+    <string name="macro_help_missing">The macro help guide is missing from this build.</string>
+    <string name="accessibility_service_description">Optional. Reads the open chat title so a phrase can use that name. ForgePrompt works with this service off.</string>
+    <string name="accessibility_service_label">ForgePrompt</string>
 </resources>

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Reads and writes the key list stored in SharedPreferences and in import/export files.
  *
- * <p>Older kboard versions saved a JSON array of strings. kboard Plus saves a JSON array of
+ * <p>Older kboard versions saved a JSON array of strings. ForgePrompt saves a JSON array of
  * objects, {@code {"text":"...","color":123}}, and still accepts the string form. A missing
  * color means the key uses the keyboard background.
  */
