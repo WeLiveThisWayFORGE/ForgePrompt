@@ -6,8 +6,8 @@ android {
         applicationId "com.adgad.kboard.plus"
         minSdkVersion 25
         targetSdkVersion 33
-        versionCode 46
-        versionName "5.3.2-plus"
+        versionCode 47
+        versionName "5.3.3-plus"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

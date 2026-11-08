@@ -1,8 +1,8 @@
-# kboard Plus macro help
+# ForgePrompt macro help
 
-This guide is bundled with kboard Plus and opens from Settings → Macro Help without a network connection. The copy in the repository is `docs/macro-help.md`.
+This guide is bundled with ForgePrompt and opens from Settings → Macro Help without a network connection. The copy in the repository is `docs/macro-help.md`.
 
-kboard Plus is a fork of [kboard](https://github.com/adgad/kboard) by adgad (file headers credit arjun). The command language comes from that project. Its own notes are the [README](https://github.com/adgad/kboard/blob/master/README.md) and the short [wiki](https://github.com/adgad/kboard/wiki). This page describes what this app does, including where that differs from those notes. kboard Plus is GPL-3.0; see `LICENSE`.
+ForgePrompt is a fork of [kboard](https://github.com/adgad/kboard) by adgad (file headers credit arjun). The command language comes from that project. Its own notes are the [README](https://github.com/adgad/kboard/blob/master/README.md) and the short [wiki](https://github.com/adgad/kboard/wiki). This page describes what this app does, including where that differs from those notes. ForgePrompt is GPL-3.0; see `LICENSE`. The application id remains `com.adgad.kboard.plus`, so existing keys stay with the app.
 
 A key is either a phrase or a command. The keyboard decides from the saved text. It does not look at the label on the key.
 

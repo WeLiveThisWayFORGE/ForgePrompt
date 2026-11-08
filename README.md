@@ -1,6 +1,8 @@
-# kboard Plus
+# ForgePrompt
 
-kboard Plus is a fork of [kboard](https://github.com/adgad/kboard) by adgad (file headers credit arjun). The baseline is the F-Droid source at upstream commit `2660fb1` (`5.3.0`, "bump version number"). This repository keeps that master history. Upstream `github.properties` is not part of this history. The app is licensed under GPL-3.0; see `LICENSE`. Original copyright notices are unchanged.
+ForgePrompt is a fork of [kboard](https://github.com/adgad/kboard) by adgad (file headers credit arjun). The baseline is the F-Droid source at upstream commit `2660fb1` (`5.3.0`, "bump version number"). This repository keeps that master history. Upstream `github.properties` is not part of this history. The app is licensed under GPL-3.0; see `LICENSE`. Original copyright notices are unchanged.
+
+The name on the launcher, in the keyboard list, and in Settings is ForgePrompt. The application id remains `com.adgad.kboard.plus`, so an update keeps the keys already stored on the device.
 
 It is a programmable Android keyboard for phrases, lenny faces, macros, and one-tap replies. This fork can be installed next to the official kboard app, and it adds a color for each key plus a key-size setting.
 
@@ -8,13 +10,13 @@ Upstream links: [F-Droid](https://f-droid.org/en/packages/com.adgad.kboard/) · 
 
 ## Install beside official kboard
 
-The application id is `com.adgad.kboard.plus`. The launcher name, the keyboard name in Android’s input-method list, and the accessibility service name are **kboard Plus**. The custom-keys screen uses its own intent action (`com.adgad.kboard.plus.CustomKeysActivity`), so opening it does not land in the official app. The Java package stays `com.adgad.kboard`.
+The application id is `com.adgad.kboard.plus`. The launcher name, the keyboard name in Android’s input-method list, and the accessibility service name are **ForgePrompt**. The custom-keys screen uses its own intent action (`com.adgad.kboard.plus.CustomKeysActivity`), so opening it does not land in the official app. The Java package stays `com.adgad.kboard`.
 
 There is no content provider or account type in this app. Backup uses the app’s own preference file (`com.adgad.kboard.plus_preferences`).
 
 ## Key color
 
-1. Open kboard Plus.
+1. Open ForgePrompt.
 2. Tap **Custom Keys**.
 3. Tap a key, or the + button to add one.
 4. Type the phrase or command, then tap a color. The × swatch clears the color.
@@ -22,7 +24,7 @@ There is no content provider or account type in this app. Backup uses the app’
 
 The keyboard paints that color as the key background and picks black or white text so the label stays readable. Keys with no color keep the background color from **Options**. The same color is shown on the custom-key row.
 
-Colors are stored on the key in the `userKeys-defaults` preference, so they are included in **Export Keys**, **Import Keys**, and Android backup. A file saved by older kboard (a JSON array of strings) still imports; those keys simply have no color. kboard Plus writes keys back as JSON objects (`{"text":"...","color":-16711681}`), and a missing `color` means “use the keyboard background”.
+Colors are stored on the key in the `userKeys-defaults` preference, so they are included in **Export Keys**, **Import Keys**, and Android backup. A file saved by older kboard (a JSON array of strings) still imports; those keys simply have no color. ForgePrompt writes keys back as JSON objects (`{"text":"...","color":-16711681}`), and a missing `color` means “use the keyboard background”.
 
 ## Key size
 
@@ -30,7 +32,7 @@ In **Options**, **Key Size** is Small, Medium, or Large. Medium is the default a
 
 ## Macro help
 
-**Macro Help** in Settings opens `docs/macro-help.md`, which is bundled in the app and works offline. It describes phrase keys, command keys, and time tokens. The command list later in this file is the upstream reference from adgad/kboard. The bundled guide is the one the app shows, and it does not treat old example websites as part of kboard Plus.
+**Macro Help** in Settings opens `docs/macro-help.md`, which is bundled in the app and works offline. It describes phrase keys, command keys, and time tokens. The command list later in this file is the upstream reference from adgad/kboard. The bundled guide is the one the app shows, and it does not treat old example websites as part of ForgePrompt.
 
 ## Time in a phrase
 
@@ -49,11 +51,11 @@ The debug APK, signed with the Android debug key, is written to:
 
 `app/build/outputs/apk/debug/app-debug.apk`
 
-Install it with `adb install -r app/build/outputs/apk/debug/app-debug.apk`, then enable **kboard Plus** under System settings → Languages & input → On-screen keyboard.
+Install it with `adb install -r app/build/outputs/apk/debug/app-debug.apk`, then enable **ForgePrompt** under System settings → Languages & input → On-screen keyboard.
 
 ## Release build
 
-Version `5.3.2-plus` (versionCode 46) keeps the application id `com.adgad.kboard.plus`. The release build is not debuggable. Gradle signs it with the permanent release key only when every one of these environment variables is set:
+Version `5.3.3-plus` (versionCode 47) keeps the application id `com.adgad.kboard.plus`. The release build is not debuggable. Gradle signs it with the permanent release key only when every one of these environment variables is set:
 
 - `KBOARD_RELEASE_STORE_FILE` — path to the release keystore
 - `KBOARD_RELEASE_STORE_PASSWORD` — keystore password

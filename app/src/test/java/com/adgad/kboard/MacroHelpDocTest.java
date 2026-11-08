@@ -17,8 +17,11 @@ public class MacroHelpDocTest {
         String text = new String(Files.readAllBytes(guide), StandardCharsets.UTF_8);
         String html = MacroHelpHtml.toHtml(text);
 
+        assertTrue(text.contains("ForgePrompt"));
         assertTrue(text.contains("https://github.com/adgad/kboard"));
         assertTrue(text.contains("GPL-3.0"));
+        assertTrue(text.contains("com.adgad.kboard.plus"));
+        assertTrue(!text.contains("We Live This Way"));
         assertTrue(text.contains("{time+5m}"));
         assertTrue(text.contains("{time+10m}"));
         assertTrue(text.contains("{time+20m}"));
