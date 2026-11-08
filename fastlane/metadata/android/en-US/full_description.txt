@@ -1,5 +1,5 @@
-ForgePrompt is a programmable Android keyboard for phrases, macros, and one-tap replies. It is a fork of kboard by adgad and is licensed under GPL-3.0.
+ForgePrompt is a programmable Android keyboard for phrases, macros, and one-tap replies. It is licensed under GPL-3.0. Copyright and upstream credit are in the NOTICE file of the source repository.
 
-The application id is com.adgad.kboard.plus, so it installs beside the official kboard app and keeps keys saved by this app. Each key can have its own color. Key size is Small, Medium, or Large.
+It installs beside the original keyboard app and keeps keys saved by this app. Each key can have its own color. Key size is Small, Medium, or Large.
 
-A phrase can include a local time such as {time+10m}. That token is filled from the phone clock when the key is tapped, and the message is not sent for you. Settings includes an offline macro guide. Command keys use the kboard macro language.
+A phrase can include a local time such as {time+10m}. That token is filled from the phone clock when the key is tapped, and the message is not sent for you. Settings includes an offline macro guide.

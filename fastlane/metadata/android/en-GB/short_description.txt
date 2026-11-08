@@ -1,1 +1,1 @@
-Fork of kboard. Phrases, macros, per-key colors, and key sizes.
+Phrases, macros, per-key colors, and key sizes.

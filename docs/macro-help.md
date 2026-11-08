@@ -2,7 +2,7 @@
 
 This guide is bundled with ForgePrompt and opens from Settings → Macro Help without a network connection. The copy in the repository is `docs/macro-help.md`.
 
-ForgePrompt is a fork of [kboard](https://github.com/adgad/kboard) by adgad (file headers credit arjun). The command language comes from that project. Its own notes are the [README](https://github.com/adgad/kboard/blob/master/README.md) and the short [wiki](https://github.com/adgad/kboard/wiki). This page describes what this app does, including where that differs from those notes. ForgePrompt is GPL-3.0; see `LICENSE`. The application id remains `com.adgad.kboard.plus`, so existing keys stay with the app.
+The command language comes from an upstream keyboard project. Copyright, the upstream name, and links are in the `NOTICE` file in the source repository. This page describes what ForgePrompt does, including where that differs from those earlier notes. ForgePrompt is GPL-3.0; see `LICENSE`. Existing keys stay with this app.
 
 A key is either a phrase or a command. The keyboard decides from the saved text. It does not look at the label on the key.
 
@@ -143,7 +143,7 @@ Fancy characters are easy to misread with a screen reader. Avoid them for anythi
 
 `img(URL)` downloads a picture, waits up to 30 seconds, and commits it as image content. The field shows it only when the open app accepts an inline image. A failure inserts nothing.
 
-kboard's README used sample hosts, including `kboard-api.glitch.me`, a cat-fact URL, and a Wolfram Alpha URL. This project does not run those hosts. A key that still points at one can fail, or can insert whatever that site returns now. Use a URL you trust. `curl` will send the finished URL, including any name or message you substituted into it.
+Earlier notes used sample websites, including a cat-fact URL and a Wolfram Alpha URL. This project does not run those sites. A key that still points at one can fail, or can insert whatever that site returns now. Use a URL you trust. `curl` will send the finished URL, including any name or message you substituted into it.
 
 The built-in cat-fact key is one of those old examples. It is not a service this app provides.
 
@@ -164,7 +164,7 @@ The service is off unless you turn it on in Android settings. The match is unrel
 
 ## Sending
 
-`s` asks the current text field to perform its send action. It does that only when the field's IME action is Send, or Done. Done is included because upstream kboard found that WhatsApp reported Done while still accepting a send action. The keyboard does not check which app is open, does not look for a send button, and does not wait.
+`s` asks the current text field to perform its send action. It does that only when the field's IME action is Send, or Done. Done is included because an earlier version of this keyboard found that WhatsApp reported Done while still accepting a send action. The keyboard does not check which app is open, does not look for a send button, and does not wait.
 
 `s` ignores a repeat count, so `3s` is one attempt. `s,s` is two attempts, back to back, with no pause. There is no delay command.
 
